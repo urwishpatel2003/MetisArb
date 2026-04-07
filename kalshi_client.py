@@ -80,7 +80,11 @@ class KalshiClient:
 
     def _post(self, endpoint: str, body: dict) -> dict:
         path = f"/trade-api/v2/{endpoint}"
-        r = self.session.post(f"{BASE_URL}/{endpoint}", json=body, headers=self._headers('POST', path))
+        url  = f"{BASE_URL}/{endpoint}"
+        headers = self._headers('POST', path)
+        r = self.session.post(url, json=body, headers=headers)
+        if r.status_code != 201:
+            logger.error(f"POST {url} → {r.status_code}: {r.text[:200]}")
         r.raise_for_status()
         return r.json()
 
