@@ -99,9 +99,9 @@ def run():
 
             # ── Step 4: Build combos and find best gap ─────────────────────
             # Try 4-leg combos first, fall back to 3-leg
-    combos = build_combos(ev_legs, n_legs=4, max_combos=500)
-    if not combos:
-        combos = build_combos(ev_legs, n_legs=3, max_combos=500)
+            combos = build_combos(ev_legs, n_legs=4, max_combos=500)
+            if not combos:
+                combos = build_combos(ev_legs, n_legs=3, max_combos=500)
             logger.info(f"Built {len(combos)} candidate combos")
 
             placed = False
