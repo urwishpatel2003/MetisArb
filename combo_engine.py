@@ -117,6 +117,11 @@ def find_ev_legs(sharp_lines: list, kalshi_contracts: list) -> list:
             kalshi_price = kalshi_c.yes_price  # cents
             kalshi_prob  = kalshi_price / 100.0
 
+            # Sanity check: heavy favorites (-150 to -500) should be 60-83c on Kalshi
+            # If Kalshi price < 55c for a -150 to -500 favorite, it is a wrong match
+            if kalshi_price < 55:
+                continue
+
             # Edge: Kalshi price < fair prob (Kalshi underpricing this favorite)
             edge = (fair_prob - kalshi_prob) / kalshi_prob * 100
             if edge < 3:
