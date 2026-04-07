@@ -54,22 +54,22 @@ class KalshiClient:
         )
         logger.info("Kalshi client initialized")
 
-    def _sign(self, ts: str, method: str, path: str) -> str:
-        msg = f"{ts}{method}{path}"
-        sig = self.private_key.sign(
-            msg.encode(),
+    def _sign(self, timestamp: str, method: str, path: str) -> str:
+        message   = f"{timestamp}{method}{path}"
+        signature = self.private_key.sign(
+            message.encode("utf-8"),
             padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.DIGEST_LENGTH),
             hashes.SHA256()
         )
-        return base64.b64encode(sig).decode()
+        return base64.b64encode(signature).decode("utf-8")
 
     def _headers(self, method: str, path: str) -> dict:
-        ts = str(int(time.time() * 1000))
+        timestamp = str(int(time.time() * 1000))
         return {
-            'KALSHI-ACCESS-KEY':       self.api_key_id,
-            'KALSHI-ACCESS-SIGNATURE': self._sign(ts, method.upper(), path),
-            'KALSHI-ACCESS-TIMESTAMP': ts,
-            'Content-Type':            'application/json',
+            "KALSHI-ACCESS-KEY":       self.api_key_id,
+            "KALSHI-ACCESS-SIGNATURE": self._sign(timestamp, method.upper(), path),
+            "KALSHI-ACCESS-TIMESTAMP": timestamp,
+            "Content-Type":            "application/json",
         }
 
     def _get(self, endpoint: str, params: dict = {}) -> dict:
