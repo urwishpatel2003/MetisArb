@@ -150,17 +150,16 @@ def place_combo(kalshi: KalshiClient, combo: list, total_cost: int) -> bool:
         # Each contract costs price_c cents = price_c/100 dollars
         n_contracts = max(1, int(cost_per_leg / (price_c / 100)))
 
+        yes_p = price_c if side == 'yes' else (100 - price_c)
         order = {
-            'ticker':           ticker,
-            'action':           'buy',
-            'side':             side,
-            'type':             'limit',
-            'yes_price':        price_c if side == 'yes' else (100 - price_c),
-            'no_price':         (100 - price_c) if side == 'yes' else price_c,
-            'count':            n_contracts,
-            'time_in_force':    'fill_or_kill',
-            'client_order_id':  str(uuid.uuid4()),
-            'order_group_id':   group_id,
+            'ticker':          ticker,
+            'action':          'buy',
+            'side':            side,
+            'type':            'limit',
+            'yes_price':       yes_p,
+            'count':           n_contracts,
+            'time_in_force':   'fill_or_kill',
+            'client_order_id': str(uuid.uuid4()),
         }
         orders.append(order)
 
