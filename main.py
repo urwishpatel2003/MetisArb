@@ -34,7 +34,7 @@ ODDS_API_KEY      = os.environ['ODDS_API_KEY']
 COST_PER_COMBO    = 50       # dollars per combo
 MAX_COMBOS_PER_DAY = 4       # max trades per day
 MIN_GAP_PTS       = 50       # minimum Kalshi payout - fair payout gap (american odds pts)
-LEGS_PER_COMBO    = 4        # legs per combo
+LEGS_PER_COMBO    = 3        # legs per combo (min 3, max 4)
 SCAN_INTERVAL     = 300      # seconds between scans (5 min)
 
 SPORTS = [
@@ -92,13 +92,16 @@ def run():
             ev_legs = find_ev_legs(all_lines, kalshi_contracts)
             logger.info(f"Found {len(ev_legs)} EV legs")
 
-            if len(ev_legs) < LEGS_PER_COMBO:
+            if len(ev_legs) < 3:
                 logger.info("Not enough EV legs for a combo")
                 time.sleep(SCAN_INTERVAL)
                 continue
 
             # ── Step 4: Build combos and find best gap ─────────────────────
-            combos = build_combos(ev_legs, n_legs=LEGS_PER_COMBO, max_combos=500)
+            # Try 4-leg combos first, fall back to 3-leg
+    combos = build_combos(ev_legs, n_legs=4, max_combos=500)
+    if not combos:
+        combos = build_combos(ev_legs, n_legs=3, max_combos=500)
             logger.info(f"Built {len(combos)} candidate combos")
 
             placed = False
